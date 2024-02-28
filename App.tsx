@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Pedometer } from 'expo-sensors';
+import { useState, useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Pedometer } from "expo-sensors";
 
 export default function App() {
-  const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
-  const [pastStepCount, setPastStepCount] = useState(0);
+  const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
   const [currentStepCount, setCurrentStepCount] = useState(0);
 
   const subscribe = async () => {
@@ -16,17 +15,20 @@ export default function App() {
     console.log("Permision", permission);
 
     if (isAvailable) {
-      return Pedometer.watchStepCount(result => {
-        if(permission.granted)
-        setCurrentStepCount(result.steps);
+      return Pedometer.watchStepCount((result) => {
+        if (permission.granted) setCurrentStepCount(result.steps);
       });
     }
   };
 
   useEffect(() => {
     const subscription = subscribe();
-
-    return () => subscription && subscription.remove();
+    return () => {
+      const clear = async () => {
+        return async () => subscription && (await subscription)?.remove();
+      };
+      clear();
+    };
   }, []);
 
   return (
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
