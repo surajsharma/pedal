@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, StatusBar } from "react-native";
 import { Pedometer } from "expo-sensors";
+import AnimatedProgressWheel from "react-native-progress-wheel";
 
 export default function App() {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
@@ -10,9 +11,7 @@ export default function App() {
     const isAvailable = await Pedometer.isAvailableAsync();
     setIsPedometerAvailable(String(isAvailable));
 
-    const permission = await Pedometer.requestPermissionsAsync();
-
-    console.log("Permision", permission);
+    let permission = await Pedometer.requestPermissionsAsync();
 
     if (isAvailable) {
       return Pedometer.watchStepCount((result) => {
@@ -27,23 +26,56 @@ export default function App() {
       const clear = async () => {
         return async () => subscription && (await subscription)?.remove();
       };
+
+      StatusBar.setHidden(true);
       clear();
     };
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Pedometer.isAvailableAsync(): {isPedometerAvailable}</Text>
-      <Text>Walk! And watch this go up: {currentStepCount}</Text>
+      <View>
+        <AnimatedProgressWheel
+          max={1000}
+          showProgressLabel={true}
+          labelStyle={styles.text}
+          subtitle={"Steps"}
+          subtitleStyle={styles.subtext}
+          color={"#010"}
+          backgroundColor={"transparent"}
+          containerColor={"transparent"}
+          size={350}
+          width={20}
+          progress={currentStepCount}
+          rounded={false}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  offset: {
     flex: 1,
-    marginTop: 15,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#000",
+  },
+
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#010",
+  },
+
+  text: {
+    color: "#0d0",
+    fontSize: 80,
+  },
+
+  subtext: {
+    color: "#9a9",
+    fontSize: 25,
   },
 });
