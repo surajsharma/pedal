@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { StyleSheet, Text, View, StatusBar } from "react-native";
 import { Pedometer } from "expo-sensors";
-import AnimatedProgressWheel from "react-native-progress-wheel";
+import CircularProgress from "react-native-circular-progress-indicator";
 
 export default function App() {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
@@ -34,22 +34,18 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <View>
-        <AnimatedProgressWheel
-          max={1000}
-          showProgressLabel={true}
-          labelStyle={styles.text}
-          subtitle={"Steps"}
-          subtitleStyle={styles.subtext}
-          color={"#010"}
-          backgroundColor={"transparent"}
-          containerColor={"transparent"}
-          size={350}
-          width={20}
-          progress={currentStepCount}
-          rounded={false}
-        />
-      </View>
+      <CircularProgress
+        value={currentStepCount}
+        initialValue={0}
+        radius={180}
+        duration={200}
+        progressValueColor={"darkgreen"}
+        maxValue={100}
+        title={"STEPS"}
+        titleColor={"green"}
+        titleStyle={{ fontWeight: "100" }}
+        allowFontScaling={true}
+      />
     </View>
   );
 }
